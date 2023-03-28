@@ -68,3 +68,38 @@ class Teeko:
             return 1
         else:
             return 0
+
+    def minimax_alphabeta(self, depth, alpha, beta):
+        if depth == 0:
+            return self.heuristica()
+
+        if self.current_player == 1:
+            max_val = -np.inf
+            for i in range(4):
+                for j in range(4):
+                    if self.board[i][j] == 0:
+                        self.board[i][j] = self.current_player
+                        self.current_player = 2
+                        val = self.minimax_alphabeta(depth-1, alpha, beta)
+                        self.board[i][j] = 0
+                        self.current_player = 1
+                        max_val = max(max_val, val)
+                        alpha = max(alpha, max_val)
+                        if beta <= alpha:
+                            break
+            return max_val
+        else:
+            min_val = np.inf
+            for i in range(4):
+                for j in range(4):
+                    if self.board[i][j] == 0:
+                        self.board[i][j] = self.current_player
+                        self.current_player = 1
+                        val = self.minimax_alphabeta(depth-1, alpha, beta)
+                        self.board[i][j] = 0
+                        self.current_player = 2
+                        min_val = min(min_val, val)
+                        beta = min(beta, min_val)
+                        if beta <= alpha:
+                            break
+            return min_val
