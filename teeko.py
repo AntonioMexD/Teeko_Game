@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import math
 
 Board_Size = 4
 
@@ -20,25 +21,50 @@ WIN_VALUE = 1000000
 # Depth limit
 DEPTH_LIMIT = 3
 
-# Definir la función heurística
-def heuristic(board, player):
-    # Contar el número de fichas del jugador en el tablero
-    player_count = np.count_nonzero(board == player)
-    # Calcular el número de líneas de tres fichas que el jugador tiene en el tablero
-    lines = 0
-    for i in range(Board_Size):
-        for j in range(Board_Size):
-            if board[i][j] == player:
-                # Comprobar las líneas horizontales
-                if j < Board_Size - 2 and board[i][j+1] == player and board[i][j+2] == player:
-                    lines += 1
-                # Comprobar las líneas verticales
-                if i < Board_Size - 2 and board[i+1][j] == player and board[i+2][j] == player:
-                    lines += 1
-                # Comprobar las líneas diagonales ascendentes
-                if i > 1 and j < Board_Size - 2 and board[i-1][j+1] == player and board[i-2][j+2] == player:
-                    lines += 1
-                # Comprobar las líneas diagonales descendentes
-                if i < Board_Size - 2 and j < Board_Size - 2 and board[i+1][j+1] == player and board[i+2][j+2] == player:
-                    lines += 1
-    return player_count + lines * 10
+class Teeko:
+    def __init__(self):
+        self.board = np.zeros((4, 4), dtype=np.int8)
+        self.current_player = 1
+
+    def actions(self):
+        actions = []
+        for i in range(4):
+            for j in range(4):
+                if self.board[i][j] == 0:
+                    actions.append((i, j))
+        return actions
+
+    def result(self, action):
+        i, j = action
+        self.board[i][j] = self.current_player
+        self.current_player = 2 if self.current_player == 1 else 1
+
+    def is_terminal(self):
+        if self.has_won(1) or self.has_won(2) or len(self.actions()) == 0:
+            return True
+        else:
+            return False
+
+    def has_won(self, player):
+        for i in range(4):
+            if (self.board[i][0] == player and self.board[i][1] == player
+                    and self.board[i][2] == player and self.board[i][3] == player):
+                return True
+            if (self.board[0][i] == player and self.board[1][i] == player
+                    and self.board[2][i] == player and self.board[3][i] == player):
+                return True
+        if (self.board[0][0] == player and self.board[1][1] == player
+                and self.board[2][2] == player and self.board[3][3] == player):
+            return True
+        if (self.board[0][3] == player and self.board[1][2] == player
+                and self.board[2][1] == player and self.board[3][0] == player):
+            return True
+        return False
+
+    def heuristica(self):
+        if self.has_won(1):
+            return -1
+        elif self.has_won(2):
+            return 1
+        else:
+            return 0
