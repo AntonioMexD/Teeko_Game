@@ -1,6 +1,5 @@
 import copy
 import numpy as np
-import math
 import random
 
 Board_Size = 4
