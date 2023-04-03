@@ -135,21 +135,24 @@ class Teeko:
         """
         Play a game of Teeko between two players.
         """
+        count = 0
         while not self.is_terminal():
+            count += 1
             if self.current_player == 1:
                 action = player1.get_action(self)
             else:
                 action = player2.get_action(self)
             self.result(action)
             if print_board:
+                print("Movement number:", count)
                 print(self.board)
                 print()
         if self.has_won(1):
-            print("Player 1 wins!")
+            print("Player 1 wins!, total number of moves in the game: ", count)
         elif self.has_won(2):
-            print("Player 2 wins!")
+            print("Player 2 wins!, total number of moves in the game: ", count)
         else:
-            print("It's a tie!")
+            print("It's a tie! total number of moves in the game: ", count)
 
 
 class HumanPlayer:
